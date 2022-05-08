@@ -122,17 +122,18 @@ def tokenize_tweet(string_data:str):
 
 topics = [{}, {}]
 hashtags = [{}, {}]
-sentiment = [{'neg': 0, 'neu': 0, 'pos': 0, 'compound': 0},
-             {'neg': 0, 'neu': 0, 'pos': 0, 'compound': 0}]
-public_metrics = [{'followers_count': 0, 'following_count': 0, 'tweet_count': 0, 'listed_count': 0},
-                  {'followers_count': 0, 'following_count': 0, 'tweet_count': 0, 'listed_count': 0}]
+sentiment = [dict({'neg': [], 'neu': [], 'pos': [], 'compound': []}),
+             dict({'neg': [], 'neu': [], 'pos': [], 'compound': []})]
+public_metrics = [dict({'followers_count': [], 'following_count': [], 'tweet_count': [], 'listed_count': []}),
+                  dict({'followers_count': [], 'following_count': [], 'tweet_count': [], 'listed_count': []})]
 count = [0, 0]
+count_time = [0,0,0,0,0]
 ats = [{}, {}]
 topic_time = [{},{},{},{},{}]
 
 # run for each tweet, need add if statement depends on rumour or not
 def get_tweet(id, model, vectorizer):
-    client = Client(BEARER_TOKEN)
+    client = Client(BEARER_TOKEN, wait_on_rate_limit=True)
     tweet = client.get_tweet(id, expansions = ["author_id"],tweet_fields=["context_annotations", "created_at","entities","public_metrics"], user_fields=["verified", "public_metrics"])
     if tweet.data == None:
         return
@@ -172,10 +173,12 @@ def get_tweet(id, model, vectorizer):
     # print(domains)
     # task 2 
     # How do COVID-19 rumour topics or trends evolve over time?
-    sent_date = tweet.data.created_at
-    slot = get_time_slot(sent_date)
-    for d in domains:
-        topic_time[slot][d] = topic_time[slot].get(d, 0) + 1
+    if prediction:
+        sent_date = tweet.data.created_at
+        slot = get_time_slot(sent_date)
+        count_time[slot] += 1
+        for d in domains:
+            topic_time[slot][d] = topic_time[slot].get(d, 0) + 1
     # print(sent_date)
     # task 3
     # What are the popular hashtags of COVID-19 rumours and non-rumours? How much overlap or difference do they share?
@@ -185,12 +188,18 @@ def get_tweet(id, model, vectorizer):
     # task 4
     # Do rumour source tweets convey a different sentiment/emotion to the non-rumour source tweets? What about their replies? 
     sentiment_score = sentiment_analysis(text)
-    sentiment[prediction] = {k:(sentiment[prediction][k]+ sentiment_score[k]) for k in sentiment[prediction].keys()}
+    # sentiment[prediction] = {sentiment[prediction][k].append(sentiment_score[k]) for k in sentiment_score.keys()}
+    
+    for k in sentiment_score.keys():
+        sentiment[prediction][k] += [sentiment_score[k]]
     # task 5
     # What are the characteristics of rumour-creating users, and are they different to normal users?
     
     pm = tweet.includes["users"][0].public_metrics
-    public_metrics[prediction] = {k:(public_metrics[prediction][k]+pm[k]) for k in public_metrics[prediction].keys()}
+    # public_metrics[prediction] = {public_metrics[prediction][k] + [pm[k]] for k in pm.keys()}
+    for k in pm.keys():
+        public_metrics[prediction][k] += [pm[k]]
+    
     # extra 1 at analysis
     # What are the characteristics of rumour-creating users, and are they different to normal users?
     
@@ -208,7 +217,7 @@ def main():
     train_data.dropna(inplace=True)
     train_data = train_data.apply(lambda x: tokenize_tweet(x))
     vectorizer.fit(train_data.tolist())
-    print(train_data)
+    # print(train_data)
     model = keras.models.load_model("tfidf.h5")
     file = "covid.data.txt"
     file_open = open('./project-data/' + file, 'r')
@@ -219,15 +228,10 @@ def main():
         source_id = ids[0]
         # id = 1243807211815649285
         get_tweet(source_id, model, vectorizer)
+        print(counter)
         counter += 1
-        if counter > 10:
-            break
-
-    # taking average
-    for i in [0,1]: 
-        public_metrics[i] = {k:(public_metrics[i][k]/ count[i]) for k in public_metrics[i].keys()} 
-        sentiment[i] = {k:(sentiment[i][k]/ count[i]) for k in sentiment[i].keys()} 
-
+        # if counter > 3:
+        #     break
     
     # printing out result
     for i in range(0, len(topic_time)):
@@ -241,7 +245,58 @@ def main():
             print(f"The {metric_names[k]} for {clf} are \n {metrics[k][p]}")
             print()
     
+    tasks = [topics, hashtags, ats]
+    file_name = ["topics", "hashtags", "ats"]
+    label = ["topic", "hashtag", "user"]
+    num = 0
+    for task in tasks:
+        task_index = list(set(list(task[0].keys()) + list(task[1].keys())))
+        task_dict = {"nonrumour":[], "rumour": []}
+        for i in task_index:
+            task_dict["nonrumour"] = task_dict["nonrumour"] + [task[0].get(i, 0)]
+            task_dict["rumour"] = task_dict["rumour"] + [task[1].get(i, 0)]
+        task_df = pd.DataFrame(data=task_dict, index = task_index)
+        print(task_df)
+        task_df.to_csv(f"output/{file_name[num]}.csv",index=True, index_label=label[num])
+        num += 1
+        
+    trend_index = []
+    for d in topic_time:
+        trend_index = trend_index + list(d.keys())
+    trend_index = list(set(trend_index))
+    trend_dict = {"2020/1/1-2020/6/1":[], "2020/6/1-2021/1/1": [], "2021/1/1-2021/6/1": [], 
+                   "2021/6/1-2022/1/1": [], "2022/1/1-2022/6/1": []}
+    for i in trend_index:
+        foo = 0
+        for k in trend_dict.keys():
+            trend_dict[k] = trend_dict[k] + [topic_time[foo].get(i, 0)]
+            foo += 1
+    trend_df = pd.DataFrame(data=trend_dict, index = trend_index)
+    print(trend_df)
+    trend_df.to_csv("output/trend.csv",index=True, index_label="Topic")
     
+        
+    sentiment_nonrumour = pd.DataFrame(data=sentiment[0])
+    sentiment_rumour = pd.DataFrame(data=sentiment[1])
+    print(sentiment_nonrumour)
+    print(sentiment_rumour)
+    sentiment_nonrumour.to_csv("output/sentiment_nonrumour.csv",index=False)
+    sentiment_rumour.to_csv("output/sentiment_rumour.csv",index=False)
 
-
+    public_metrics_nonrumour = pd.DataFrame(data=public_metrics[0])
+    public_metrics_rumour = pd.DataFrame(data=public_metrics[1])
+    print(public_metrics_nonrumour)
+    print(public_metrics_rumour)
+    public_metrics_nonrumour.to_csv("output/public_metrics_nonrumour.csv",index=False)
+    public_metrics_rumour.to_csv("output/public_metrics_rumour.csv",index=False)
+    
+    count_dict = {"nonrumour": count[0], "rumour": count[1],
+                  "2020/1/1-2020/6/1":count_time[0], 
+                  "2020/6/1-2021/1/1": count_time[1], 
+                  "2021/1/1-2021/6/1": count_time[2], 
+                  "2021/6/1-2022/1/1": count_time[3], 
+                  "2022/1/1-2022/6/1": count_time[4]}
+    count_df = pd.DataFrame(data = count_dict, index=[0])
+    count_df.to_csv("output/count.csv", index=True, index_label="0")
+    
 main()
