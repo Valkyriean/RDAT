@@ -1,43 +1,43 @@
-Topic,2020/1/1-2020/6/1,2020/6/1-2021/1/1,2021/1/1-2021/6/1,2021/6/1-2022/1/1,2022/1/1-2022/6/1
-Movie Genre,1,0,0,0,0
-Musician,33,5,0,0,0
-Athlete,21,10,0,0,0
-TV Episodes,18,7,0,0,0
-Holiday,9,10,0,0,0
-Sport,20,13,0,0,0
-Journalist,342,114,0,0,0
-Product,11,2,0,0,0
-Entertainment Personality,59,26,0,0,0
-Interests and Hobbies,69,29,0,0,0
-Politician,1317,634,0,0,0
-Person,1678,760,0,0,0
-Movie,1,0,0,0,0
-Multimedia Franchise,5,2,0,0,0
-Place,0,1,0,0,0
-Reoccurring Trends,3,2,0,0,0
-Baseball Game,1,2,0,0,0
-Viral Accounts,1,0,0,0,0
-Digital Creator,0,2,0,0,0
-Sports Personality,14,2,0,0,0
-Actor,50,14,0,0,0
-Soccer Match,3,5,0,0,0
-Ongoing News Story,1959,897,0,0,0
-Entities [Entity Service],111,35,0,0,0
-Brand,733,338,0,0,0
-Interests and Hobbies Category,136,53,0,0,0
-Video Game,1,0,0,0,0
-Sports League,25,23,0,0,0
-Basketball Game,3,0,0,0,0
-Brand Vertical,342,157,0,0,0
-Brand Category,472,195,0,0,0
-Political Body,230,87,0,0,0
-Radio Station,1,0,0,0,0
-TV Shows,56,31,0,0,0
-Book Genre,1,0,0,0,0
-Sports Event,10,7,0,0,0
-Events [Entity Service],852,453,0,0,0
-Sports Team,20,11,0,0,0
-Music Genre,23,5,0,0,0
-Concert,2,0,0,0,0
-Coach,2,2,0,0,0
-Interests and Hobbies Vertical,121,42,0,0,0
+Topic,2020/1/1-2020/3/1,2020/3/1-2020/6/1,2020/6/1-2020/9/1,2020/9/1-2021/1/1
+Digital Creator,0,0,2,0
+Viral Accounts,0,1,0,0
+Coach,0,2,2,0
+TV Episodes,0,18,7,0
+Brand,13,720,338,0
+Events [Entity Service],23,829,453,0
+Politician,31,1286,634,0
+Interests and Hobbies Category,2,134,53,0
+Athlete,0,21,10,0
+Sports Team,0,20,11,0
+Concert,0,2,0,0
+Radio Station,0,1,0,0
+Musician,1,32,5,0
+Sports League,2,23,23,0
+Brand Vertical,3,339,157,0
+TV Shows,3,53,31,0
+Entertainment Personality,1,58,26,0
+Political Body,5,225,87,0
+Multimedia Franchise,0,5,2,0
+Sport,0,20,13,0
+Movie Genre,0,1,0,0
+Reoccurring Trends,0,3,2,0
+Entities [Entity Service],1,110,35,0
+Basketball Game,0,3,0,0
+Soccer Match,2,1,5,0
+Person,41,1637,760,0
+Brand Category,7,465,195,0
+Movie,0,1,0,0
+Video Game,0,1,0,0
+Actor,4,46,14,0
+Product,1,10,2,0
+Sports Event,2,8,7,0
+Holiday,0,9,10,0
+Place,0,0,1,0
+Book Genre,0,1,0,0
+Sports Personality,0,14,2,0
+Baseball Game,0,1,2,0
+Interests and Hobbies Vertical,1,120,42,0
+Journalist,8,334,114,0
+Music Genre,1,22,5,0
+Interests and Hobbies,1,68,29,0
+Ongoing News Story,40,1919,897,0
