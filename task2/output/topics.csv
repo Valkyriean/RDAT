@@ -1,0 +1,8 @@
+topic,nonrumour,rumour
+Movie,1,0
+Politician,0,1
+Person,1,1
+Ongoing News Story,3,2
+Events [Entity Service],2,1
+Brand,2,0
+Movie Genre,1,0
