@@ -1,11 +1,9 @@
-from logging import exception
 import string
-from flask import get_template_attribute
 import numpy as np
 from pytz import UTC
 import scipy
 from tweepy import Client
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
@@ -22,9 +20,6 @@ nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
 file = "covid.data.txt"
-
-
-# BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAIHFbAEAAAAA0oBVG5orLLErnyAqw2po3fOae5w%3D4lgZWoMOyGG496F2aNACoKOdDCaDnxqret6oFPLToE244O6Tx6"
 
 tokens = ["AAAAAAAAAAAAAAAAAAAAAIHFbAEAAAAA0oBVG5orLLErnyAqw2po3fOae5w%3D4lgZWoMOyGG496F2aNACoKOdDCaDnxqret6oFPLToE244O6Tx6",
           "AAAAAAAAAAAAAAAAAAAAABoebgEAAAAA8nOwpOH6GviG0pVFbGAEowC6lrE%3DvQmBGiPwQ2EJKcoMQUNYDwgb0d5vkjxvSPtkuqY0FFGY9D2yS8",
