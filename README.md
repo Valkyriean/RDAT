@@ -3,7 +3,7 @@
 
 # Introduction
 
-The project trains a machine learning model to classify rumours on Twitter. And then use that model to analyse tweets that are classified as a rumour.
+The project trains a machine learning model to classify rumours on Twitter. And then analyse tweets that are classified as a rumour by the model.
 
 ## Data extracted into train.data.txt.csv
 | main_tweet | main_tweet_id | replies | label
